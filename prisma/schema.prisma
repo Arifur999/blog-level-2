@@ -26,17 +26,29 @@ model Post {
   authorId  String   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  comments  comment[]
+
+  @@index([authorId])
+  @@map("posts")
 }
 
 model comment {
   id        String   @id @default(uuid())
   postId    String
+  post      Post     @relation(fields: [postId], references: [id])
   authorId  String
   parentId  String?
+  parent    comment? @relation("CommentToComment", fields: [parentId], references: [id])
+  replies   comment[] @relation("CommentToComment")
   status    commentStatus @default(APPROVED)
   content   String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("comments")
 }
 
 

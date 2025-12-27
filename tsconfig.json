@@ -10,7 +10,6 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "target": "ES2023",
- 
     "types": [],
     // For nodejs:
     // "lib": ["esnext"],
@@ -45,5 +44,5 @@
      "esModuleInterop": true,
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist","src/generated"]
+  "exclude": ["node_modules", "dist","generated/prisma"]
 }
