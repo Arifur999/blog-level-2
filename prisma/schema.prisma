@@ -12,3 +12,44 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+model Post {
+  id        String      @id @default(uuid())
+  title     String @db.VarChar(255)
+  content   String? @db.Text
+  thumbnail String? @db.VarChar(255)
+  isFeatured Boolean  @default(false)
+  status    postStatus @default(PUBLISHED)
+  tags      String[]  
+  viewCount Int      @default(0)
+  authorId  String   
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model comment {
+  id        String   @id @default(uuid())
+  postId    String
+  authorId  String
+  parentId  String?
+  status    commentStatus @default(APPROVED)
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
+
+enum postStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum commentStatus {
+ APPROVED
+REJECTED
+ 
+}
