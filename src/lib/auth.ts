@@ -12,7 +12,7 @@ export const auth = betterAuth({
     additionalFields: {
       role: {
         type: "string",
-        defaultValue: "user",
+        defaultValue: "USER",
         required: false,
       },
       phone: {
@@ -21,12 +21,21 @@ export const auth = betterAuth({
       },
       status: {
         type: "string",
-        defaultValue: "active",
+        defaultValue: "ACTIVE",
         required: false,
       },
     },
-    emailAndPassword: {
+   
+  },
+   emailAndPassword: {
       enabled: true,
+   
+      autoSignIn: false,
+      requireEmailVerification: true,
+    },
+emailVerification: {
+    sendVerificationEmail: async ( { user, url, token }, request) => {
+      console.log(`Send verification email to ${user.email} with URL: ${url} and token: ${token}`);
     },
   },
 });
