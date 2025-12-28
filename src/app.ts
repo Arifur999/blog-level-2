@@ -1,10 +1,11 @@
 import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
+import { toNodeHandler } from "better-auth/node";
 import { PostRouter } from './modules/post/post.router';
+import { auth } from './lib/auth';
 
 const app = express();
-
+app.use(express.json());
+app.all('/api/auth/*splat', toNodeHandler(auth));
 
 
 app.use("/posts", PostRouter);

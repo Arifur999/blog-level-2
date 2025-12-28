@@ -13,46 +13,41 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model Post {
-  id        String      @id @default(uuid())
-  title     String @db.VarChar(255)
-  content   String? @db.Text
-  thumbnail String? @db.VarChar(255)
-  isFeatured Boolean  @default(false)
-  status    postStatus @default(PUBLISHED)
-  tags      String[]  
-  viewCount Int      @default(0)
-  authorId  String   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  comments  comment[]
+  id         String     @id @default(uuid())
+  title      String     @db.VarChar(255)
+  content    String?    @db.Text
+  thumbnail  String?    @db.VarChar(255)
+  isFeatured Boolean    @default(false)
+  status     postStatus @default(PUBLISHED)
+  tags       String[]
+  viewCount  Int        @default(0)
+  authorId   String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  comments   comment[]
 
   @@index([authorId])
   @@map("posts")
 }
 
 model comment {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
   postId    String
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post          @relation(fields: [postId], references: [id])
   authorId  String
   parentId  String?
-  parent    comment? @relation("CommentToComment", fields: [parentId], references: [id])
-  replies   comment[] @relation("CommentToComment")
+  parent    comment?      @relation("CommentToComment", fields: [parentId], references: [id])
+  replies   comment[]     @relation("CommentToComment")
   status    commentStatus @default(APPROVED)
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  content   String        @db.Text
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   @@index([postId])
   @@index([authorId])
   @@map("comments")
 }
-
-
-
 
 enum postStatus {
   DRAFT
@@ -61,7 +56,69 @@ enum postStatus {
 }
 
 enum commentStatus {
- APPROVED
-REJECTED
- 
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
