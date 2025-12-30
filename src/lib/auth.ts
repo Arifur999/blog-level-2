@@ -49,10 +49,12 @@ export const auth = betterAuth({
       requireEmailVerification: true,
     },
 emailVerification: {
+  sendOnSignUp: true,
     sendVerificationEmail: async ( { user, url, token }, request) => {
 
 
-const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
+try {
+  const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
 const info = await transporter.sendMail({
   from: `"blog App" <${process.env.GM_ID}>`, // sender address
   to: user.email, // list of receivers
@@ -145,8 +147,21 @@ const info = await transporter.sendMail({
 `,
 });
 
+} catch (error) {
+  console.error("Error sending verification email:", error);
+}
+
+
+
 
 
     },
   },
+ socialProviders: {
+        google: { 
+            clientId: process.env.GOOGLE_CLIENT_ID as string, 
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
+        }, 
+    },
+
 });
