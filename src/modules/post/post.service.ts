@@ -14,6 +14,12 @@ const createPost =async(data:Omit<Post, "id" | "createdAt" | "updatedAt">, userI
     
     
 }   
+
+const getAllPosts = async()=>{
+    const result = await prisma.post.findMany();
+    return result;
+}   
 export const PostService = {
     createPost,
+    getAllPosts
 };
