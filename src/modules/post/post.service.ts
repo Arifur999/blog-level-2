@@ -20,7 +20,8 @@ const getAllPosts = async(payload: { search?: string | undefined })=>{
         where: payload.search ? {
             OR: [
                 { title: { contains: payload.search, mode: 'insensitive' } },   
-                { content: { contains: payload.search, mode: 'insensitive' } }
+                { content: { contains: payload.search, mode: 'insensitive' } },
+                {tags: { has: payload.search } }
             ]
         } : {}
     });
