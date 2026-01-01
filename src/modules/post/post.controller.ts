@@ -24,6 +24,7 @@ const createPost = async (req: Request, res: Response) => {
     const { search } = req.query;
     const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
     const status = req.query.status as postStatus | undefined;
+    const authorId = req.query.authorId as string | undefined;
     const isFeatured = req.query.isFeatured
       ? req.query.isFeatured === "true"
         ? true
@@ -33,9 +34,10 @@ const createPost = async (req: Request, res: Response) => {
       : undefined;
     const result = await PostService.getAllPosts({
       search: search as string | undefined,
-      tags: tags as string[] | [],
+      tags,
       isFeatured,
       status,
+      authorId,
     });
     res.status(200).json(result);
   } catch (error) {
