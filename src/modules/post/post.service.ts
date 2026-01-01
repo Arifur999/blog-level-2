@@ -1,40 +1,52 @@
 import { Post } from "../../../generated/prisma/client";
+import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
-const createPost =async(data:Omit<Post, "id" | "createdAt" | "updatedAt">, userId:string)=>{
+const createPost = async (
+  data: Omit<Post, "id" | "createdAt" | "updatedAt">,
+  userId: string
+) => {
+  const result = await prisma.post.create({
+    data: {
+      ...data,
+      authorId: userId,
+    },
+  });
+  return result;
+};
 
-    const result =await prisma.post.create({
-        data:{
-            ...data,
-            authorId:userId,
+const getAllPosts = async ({
+  search,
+  tags,
+}: {
+  search: string | undefined;
+  tags: string[] | [];
+}) => {
+  const andConditions: PostWhereInput[] = [];
+  if (search) {
+    andConditions.push({
+      OR: [
+        { title: { contains: search, mode: "insensitive" } },
+        { content: { contains: search, mode: "insensitive" } },
+        { tags: { has: search } },
+      ],
+    });
+  }
+
+  if (tags.length > 0) {
+    andConditions.push({ tags: { hasEvery: tags as string[] } });
+  }
+
+  const result = await prisma.post.findMany({
+    where: search
+      ? {
+          AND: andConditions,
         }
-    });
-    return result;  
-    
-    
-    
-}   
-
-const getAllPosts = async(payload: { search?: string | undefined,
-
-    tags?: string[] | []
- })=>{
-    const result = await prisma.post.findMany({
-        where: payload.search ? {
-            OR: [
-                { title: { contains: payload.search, mode: 'insensitive' } },   
-                { content: { contains: payload.search, mode: 'insensitive' } },
-                {tags: { has: payload.search } }
-                
-            ],
-            tags:{ hasEvery: payload.tags as string[] }
-        } 
-
-        : {}
-    });
-    return result;
-}   
+      : {},
+  });
+  return result;
+};
 export const PostService = {
-    createPost,
-    getAllPosts
+  createPost,
+  getAllPosts,
 };
