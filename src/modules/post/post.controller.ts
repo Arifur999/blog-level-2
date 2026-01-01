@@ -25,7 +25,8 @@ const getAllPosts = async (req:Request, res:Response) => {
     // Logic to get all posts
     try {       
         const {search}=req.query
-        const result = await PostService.getAllPosts({search : search as string | undefined});
+        const tags = req.query.tags? (req.query.tags as string).split(","): [];
+        const result = await PostService.getAllPosts({search : search as string | undefined ,tags : tags as string[] | []});
         res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ error: "Failed to get posts" });
