@@ -1,4 +1,5 @@
 import { Post, postStatus } from "../../../generated/prisma/client";
+import { SortOrder } from "../../../generated/prisma/internal/prismaNamespace";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
@@ -24,6 +25,8 @@ const getAllPosts = async ({
   page,
   limit,
   skip,
+  sort,
+  order,
 }: {
   search: string | undefined;
   tags: string[] | [];
@@ -33,6 +36,8 @@ const getAllPosts = async ({
     page: number;
     limit: number;
     skip: number;
+    sort: string | undefined ;
+    order: string | undefined;
 }) => {
   const andConditions: PostWhereInput[] = [];
   if (search) {
@@ -64,11 +69,12 @@ const getAllPosts = async ({
   const result = await prisma.post.findMany({
     take: limit,
     skip: skip,
-    where: search
-      ? {
+    where: 
+       {
           AND: andConditions,
-        }
-      : {},
+        },
+        orderBy: sort && order ? { [sort]: order } : { createdAt: "desc" },
+      
   });
   return result;
 };
