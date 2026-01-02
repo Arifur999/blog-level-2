@@ -6,10 +6,11 @@ import { prisma } from "../lib/prisma";
 async function seedAdmin() {
   try {
     const adminData = {
-      name: "Admin User",
-      email: "admin@example.com",
+      name: "Arif777",
+      email: "arr96777777@gmail.com",
       role: UserRole.ADMIN,
       password: "SecureP@ssw0rd!",
+      emailVerified: true,
     };
 
     const existingUser = await prisma.user.findUnique({
@@ -23,7 +24,7 @@ async function seedAdmin() {
     }
 
     const signUpAdmin = await fetch(
-      "http://localhost:5000/api/auth/sign-in/email",
+      "http://localhost:5000/api/auth/sign-up/email",
       {
         method: "POST",
         headers: {
@@ -32,7 +33,22 @@ async function seedAdmin() {
         body: JSON.stringify(adminData),
       }
     );
+
+
+    console.log(signUpAdmin);
+    if (signUpAdmin.ok) {
+        await prisma.user.update({
+            where: { email: adminData.email },
+            data: { emailVerified: true },
+        });
+      console.log("Admin user successfully created.");
+    } else {
+      console.error("Failed to create admin user.");
+    }
+
   } catch (error) {
     console.error("Error seeding admin user:", error);
   }
 }
+
+seedAdmin();
