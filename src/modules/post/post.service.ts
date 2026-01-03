@@ -30,14 +30,14 @@ const getAllPosts = async ({
 }: {
   search: string | undefined;
   tags: string[] | [];
-  isFeatured:boolean | undefined;
+  isFeatured: boolean | undefined;
   status: postStatus | undefined;
-    authorId: string | undefined;
-    page: number;
-    limit: number;
-    skip: number;
-    sort: string  ;
-    order: string ;
+  authorId: string | undefined;
+  page: number;
+  limit: number;
+  skip: number;
+  sort: string;
+  order: string;
 }) => {
   const andConditions: PostWhereInput[] = [];
   if (search) {
@@ -54,7 +54,7 @@ const getAllPosts = async ({
     andConditions.push({ tags: { hasEvery: tags as string[] } });
   }
 
-  if (typeof isFeatured === 'boolean') {
+  if (typeof isFeatured === "boolean") {
     andConditions.push({ isFeatured });
   }
 
@@ -69,12 +69,10 @@ const getAllPosts = async ({
   const result = await prisma.post.findMany({
     take: limit,
     skip: skip,
-    where: 
-       {
-          AND: andConditions,
-        },
-        orderBy: { [sort]: order }
-      
+    where: {
+      AND: andConditions,
+    },
+    orderBy: { [sort]: order },
   });
 
   const totalCount = await prisma.post.count({
@@ -82,33 +80,37 @@ const getAllPosts = async ({
       AND: andConditions,
     },
   });
-  return { 
+  return {
     posts: result,
-     pagination: {
-      total: totalCount, 
+    pagination: {
+      total: totalCount,
       page,
       limit,
-      totalPages: Math.ceil(totalCount / limit),   
-    }
+      totalPages: Math.ceil(totalCount / limit),
+    },
+  };
 
-};
-
-
-  return result;    
+  return result;
 };
 
 const getPostById = async (postId: string) => {
-  const result = await prisma.post.findUnique({
-    where: { id: postId },
-  });
+  return await prisma.$transaction(async (tx) => {
+    await tx.post.update({
+      where: { id: postId },
+      data: {
+        viewCount: { increment: 1 },
+      },
+    });
 
-    return result;
+    const postData = await tx.post.findUnique({
+      where: { id: postId },
+    });
+    return postData;
+  });
 };
-   
 
 export const PostService = {
   createPost,
   getAllPosts,
-    getPostById,
-
+  getPostById,
 };
