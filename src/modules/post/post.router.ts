@@ -6,6 +6,7 @@ const router = express.Router();
 
 
 router.get("/", PostController.getAllPosts);
+router.get("/:id", PostController.getPostById);
 
 // Example route for posts
 router.post("/", authRole(UserRole.ADMIN, UserRole.USER), PostController.createPost);
