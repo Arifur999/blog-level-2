@@ -1,5 +1,4 @@
 import { Post, postStatus } from "../../../generated/prisma/client";
-import { SortOrder } from "../../../generated/prisma/internal/prismaNamespace";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
