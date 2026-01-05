@@ -33,7 +33,22 @@ const getCommentsById = async (req: Request, res: Response) => {
     return;
   }
 };
+const getCommentsByAuthor = async (req: Request, res: Response) => {
+
+
+  try {
+    const { authorId } = req.params;
+    const result = await CommentService.getCommentsByAuthor(authorId as string);
+    res.status(200).json(result);
+
+    
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create comment" });
+    return;
+  }
+};
 export const CommentController = {
     createComment,
-    getCommentsById
+    getCommentsById,
+    getCommentsByAuthor
 };
