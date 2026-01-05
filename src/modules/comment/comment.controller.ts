@@ -47,8 +47,28 @@ const getCommentsByAuthor = async (req: Request, res: Response) => {
     return;
   }
 };
+const deleteComment = async (req: Request, res: Response) => {
+
+
+  try {
+    const user = req.user;
+    const { commentId } = req.params;
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const result = await CommentService.deleteComment(commentId as string, user?.id as string);
+    res.status(200).json(result);
+
+    
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create comment" });
+    return;
+  }
+};
 export const CommentController = {
     createComment,
     getCommentsById,
-    getCommentsByAuthor
+    getCommentsByAuthor,
+    deleteComment
 };
