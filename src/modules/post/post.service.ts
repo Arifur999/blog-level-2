@@ -205,13 +205,33 @@ const total = await prisma.post.aggregate({
    };
 };
 
+const updatePost = async (
+  postId: string,
+  data: Partial<Post>,authorId: string
+) => {
+  const postData = await prisma.post.findUniqueOrThrow({
+    where: { id: postId },
+    select: { id: true, authorId: true }
+
+   
+  });
+  if (postData.authorId !== authorId) {
+    throw new Error("Unauthorized to update this post");
+  }
+
+const updatedPost = await prisma.post.update({
+    where: { id: postId },
+    data,
+  });
+  return updatedPost;
 
 
-
+};
 
 export const PostService = {
   createPost,
   getAllPosts,
   getPostById,
   getMyPosts,
+  updatePost,
 };

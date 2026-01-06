@@ -90,9 +90,27 @@ const getPostById = async (req: Request, res: Response) => {
     }
 };
 
+const updatePost = async (req: Request, res: Response) => {
+    // Logic to update a post    
+    try { 
+      const postId = req.params.id;
+      const user = req.user;
+      if (!postId) {
+           throw new Error("Post not found");
+        }
+    const result = await PostService.updatePost(postId, req.body, user?.id as string);
+      res.status(200).json(result);
+    }
+    catch (error) {
+      res.status(500).json({ error: "Failed to update post" });
+      return;
+    }
+};
+
 export const PostController = {
   createPost,
   getAllPosts,
     getPostById,
-    getMyPosts
+    getMyPosts,
+    updatePost,
 };
