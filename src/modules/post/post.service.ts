@@ -1,3 +1,4 @@
+import { Result } from "pg";
 import { commentStatus, Post, postStatus } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
@@ -151,8 +152,19 @@ const getPostById = async (postId: string) => {
   });
 };
 
+const getMyPosts = async (authorId: string) => {
+  return await prisma.post.findMany({
+    where: { 
+      authorId
+     },
+    orderBy: { createdAt: "desc" },
+  });
+  return Result;
+};
+
 export const PostService = {
   createPost,
   getAllPosts,
   getPostById,
+  getMyPosts,
 };
