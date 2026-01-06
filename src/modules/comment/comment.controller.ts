@@ -82,6 +82,22 @@ const updateComment = async (req: Request, res: Response) => {
     return;
   }
 };
+const moderateComment = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const { commentId } = req.params;
+    const { status } = req.body;
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const result = await CommentService.moderateComment(commentId as string, req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update comment" });
+    return;
+  }
+};
+
 
 
 export const CommentController = {
@@ -89,5 +105,6 @@ export const CommentController = {
     getCommentsById,
     getCommentsByAuthor,
     deleteComment,
-    updateComment
+    updateComment,
+    moderateComment
 };
