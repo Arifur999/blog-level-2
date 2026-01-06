@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PostService } from "./post.service";
 import { Post, postStatus } from "../../../generated/prisma/client";
 import { paginationSortingHelper } from "../../helper/peginationSorting";
+import { UserRole } from "../../middleware/auth";
 
 const createPost = async (req: Request, res: Response) => {
   // Logic to create a new post
@@ -93,12 +94,18 @@ const getPostById = async (req: Request, res: Response) => {
 const updatePost = async (req: Request, res: Response) => {
     // Logic to update a post    
     try { 
-      const postId = req.params.id;
+      const {postId} = req.params;
       const user = req.user;
       if (!postId) {
            throw new Error("Post not found");
         }
-    const result = await PostService.updatePost(postId, req.body, user?.id as string);
+
+        if (!user) {
+           throw new Error("Unauthorized");
+        }
+
+    const isAdmin = user.role===UserRole.ADMIN
+    const result = await PostService.updatePost(postId, req.body, user?.id as string, isAdmin);
       res.status(200).json(result);
     }
     catch (error) {

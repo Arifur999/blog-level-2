@@ -207,7 +207,9 @@ const total = await prisma.post.aggregate({
 
 const updatePost = async (
   postId: string,
-  data: Partial<Post>,authorId: string
+  data: Partial<Post>,
+  authorId: string,
+  isAdmin: boolean 
 ) => {
   const postData = await prisma.post.findUniqueOrThrow({
     where: { id: postId },
@@ -215,8 +217,12 @@ const updatePost = async (
 
    
   });
-  if (postData.authorId !== authorId) {
+  if (!isAdmin && postData.authorId !== authorId) {
     throw new Error("Unauthorized to update this post");
+  }
+
+  if(!isAdmin){
+    delete data.isFeatured;
   }
 
 const updatedPost = await prisma.post.update({
