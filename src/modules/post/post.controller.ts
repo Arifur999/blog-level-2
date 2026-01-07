@@ -114,10 +114,32 @@ const updatePost = async (req: Request, res: Response) => {
     }
 };
 
+const deletePost = async (req: Request, res: Response) => {
+    // Logic to delete a post    
+    try {
+      const {postId} = req.params;
+      const user = req.user;
+      if (!postId) {
+            throw new Error("Post not found");
+        }
+        if (!user) {
+           throw new Error("Unauthorized");
+        }
+    const isAdmin = user.role===UserRole.ADMIN
+    const result = await PostService.deletePost( postId, user?.id as string, isAdmin);
+      res.status(200).json(result);
+    }
+    catch (error) {
+      res.status(500).json({ error: "Failed to delete post" });
+      return;
+    }
+};
+
 export const PostController = {
   createPost,
   getAllPosts,
     getPostById,
     getMyPosts,
     updatePost,
+    deletePost
 };

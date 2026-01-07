@@ -239,6 +239,15 @@ const deletePost = async (postId: string, authorId: string, isAdmin: boolean) =>
     where: { id: postId },
     select: { id: true, authorId: true }
   });
+
+if (!isAdmin && postData.authorId !== authorId) {
+    throw new Error("Unauthorized to delete this post");
+  }
+
+  return await prisma.post.delete({
+    where: { id: postId },
+  });
+
 }
 
 export const PostService = {
