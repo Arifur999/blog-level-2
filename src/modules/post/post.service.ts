@@ -251,18 +251,58 @@ if (!isAdmin && postData.authorId !== authorId) {
 }
 
 const getStats = async () => {
-  const totalPosts = await prisma.post.count();
-  const featuredPosts = await prisma.post.count({ 
-    where: { isFeatured: true }
-  });
-  const draftPosts = await prisma.post.count({ 
-    where: { status: postStatus.DRAFT }     
-  });
-  return {
-    totalPosts,
-    featuredPosts,
-    draftPosts,
-  };
+  // const totalPosts = await prisma.post.count();
+  // const featuredPosts = await prisma.post.count({ 
+  //   where: { isFeatured: true }
+  // });
+  // const draftPosts = await prisma.post.count({ 
+  //   where: { status: postStatus.DRAFT }     
+  // });
+  // return {
+  //   totalPosts,
+  //   featuredPosts,
+  //   draftPosts,
+  // };
+
+  //----------------------------------//
+
+return await prisma.$transaction(async (tx) => {
+
+const [totalPostsPromise, featuredPostsPromise, publishedPostsPromise, draftPostsPromise,totalCount,approvedComments] = await Promise.all([
+    await tx.post.count(),
+    await tx.post.count({
+        where: { isFeatured: true }
+    }),
+    await tx.post.count({
+        where: { status: postStatus.PUBLISHED }
+    }),
+    await tx.post.count({
+        where: { status: postStatus.DRAFT }
+    }),
+    await tx.post.count({
+        where: { status: postStatus.ARCHIVED }
+    }),
+    await tx.comment.count({
+        where:{
+            status:commentStatus.APPROVED
+        }
+    })
+]);
+
+
+
+return {
+        totalPostsPromise,
+        featuredPostsPromise,
+       publishedPostsPromise,
+       draftPostsPromise,
+        approvedComments,
+        totalCount
+    };
+
+});
+
+
 };
 
 export const PostService = {
