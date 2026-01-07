@@ -234,10 +234,18 @@ const updatedPost = await prisma.post.update({
 
 };
 
+const deletePost = async (postId: string, authorId: string, isAdmin: boolean) => {
+  const postData = await prisma.post.findUniqueOrThrow({
+    where: { id: postId },
+    select: { id: true, authorId: true }
+  });
+}
+
 export const PostService = {
   createPost,
   getAllPosts,
   getPostById,
   getMyPosts,
   updatePost,
+  deletePost,
 };
