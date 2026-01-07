@@ -250,6 +250,21 @@ if (!isAdmin && postData.authorId !== authorId) {
 
 }
 
+const getStats = async () => {
+  const totalPosts = await prisma.post.count();
+  const featuredPosts = await prisma.post.count({ 
+    where: { isFeatured: true }
+  });
+  const draftPosts = await prisma.post.count({ 
+    where: { status: postStatus.DRAFT }     
+  });
+  return {
+    totalPosts,
+    featuredPosts,
+    draftPosts,
+  };
+};
+
 export const PostService = {
   createPost,
   getAllPosts,
@@ -257,4 +272,5 @@ export const PostService = {
   getMyPosts,
   updatePost,
   deletePost,
+  getStats,
 };
