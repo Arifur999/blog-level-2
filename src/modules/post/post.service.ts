@@ -244,6 +244,15 @@ const deletePost = async (
   });
 };
 
+const getTotalViews = async () => {
+  const result = await prisma.post.aggregate({
+    _sum: {
+      viewCount: true,
+    },
+  });
+  return result._sum.viewCount || 0;
+}
+
 const getStats = async () => {
   // const totalPosts = await prisma.post.count();
   // const featuredPosts = await prisma.post.count({
@@ -329,4 +338,5 @@ export const PostService = {
   updatePost,
   deletePost,
   getStats,
+  getTotalViews
 };

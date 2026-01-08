@@ -148,6 +148,19 @@ const getStats = async (req: Request, res: Response) => {
     }
 };
 
+const getTotalViews = async (req: Request, res: Response) => {
+    // Logic to get total views    
+    try { 
+    const result = await PostService.getTotalViews();
+    res.status(200).json(result);
+    }
+    catch (error) {
+      res.status(500).json({ error: "Failed to get total views" });
+      return;
+    }
+};  
+
+
 export const PostController = {
   createPost,
   getAllPosts,
@@ -156,4 +169,5 @@ export const PostController = {
     updatePost,
     deletePost,
     getStats,
+    getTotalViews
 };
