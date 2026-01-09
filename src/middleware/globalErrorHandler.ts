@@ -28,9 +28,17 @@ if (err.code === "P2025") {
     message = "Database Error";
     error = err.message;
 } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    statusCode = 400;
-    message = "Database Error";
-    error = err.message;
+
+    if (err.code === "P2002") {
+        statusCode = 400;
+        message = "Resource Not Found";
+        error = err.message;
+    }
+ else if (err.code === "P2003") {
+        statusCode = 400;
+        message = "Foreign key constraint failed";
+        error = err.message;
+    }
 }
 
 

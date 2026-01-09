@@ -90,7 +90,7 @@ const getPostById = async (req: Request, res: Response) => {
     }
 };
 
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response, next: NextFunction) => {
     // Logic to update a post    
     try { 
       const {postId} = req.params;
@@ -108,8 +108,7 @@ const updatePost = async (req: Request, res: Response) => {
       res.status(200).json(result);
     }
     catch (error) {
-      res.status(500).json({ error: "Failed to update post" });
-      return;
+      next(error);
     }
 };
 
