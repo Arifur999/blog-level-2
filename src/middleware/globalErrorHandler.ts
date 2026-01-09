@@ -16,7 +16,23 @@ if (err instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
     message = "Validation Error";
     error = err.message;
-} 
+} else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+
+if (err.code === "P2025") {
+    statusCode = 400;
+    message = "Resource Not Found";
+    error = err.message;
+    }
+
+    statusCode = 400;
+    message = "Database Error";
+    error = err.message;
+} else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    statusCode = 400;
+    message = "Database Error";
+    error = err.message;
+}
+
 
 res.status(statusCode).json({ message, error });
 
