@@ -56,6 +56,11 @@ if (err.code === "P2025") {
     statusCode = 400;
     message = "Unknown Request Error";
     error = err.message;
+} else if (err instanceof Prisma.PrismaClientRustPanicError) {
+
+    statusCode = 500;
+    message = "Internal Rust Panic Error";
+    error = err.message;
 }
 
 
