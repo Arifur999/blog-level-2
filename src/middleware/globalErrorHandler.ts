@@ -68,10 +68,13 @@ if(err.errorCode==="P1000"){
     statusCode = 500;
     message = "Database connection error";
     error = err.message;
+} else if(err.errorCode==="P1001"){
+
+    statusCode = 500;
+    message = "Database server is not running";
+    error = err.message;
 }
 
-
-   
 }
 
 
