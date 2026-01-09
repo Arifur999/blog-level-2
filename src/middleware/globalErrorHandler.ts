@@ -39,6 +39,23 @@ if (err.code === "P2025") {
         message = "Foreign key constraint failed";
         error = err.message;
     }
+} else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+
+    if (err.code === "P2002") {
+        statusCode = 400;
+        message = "Resource Not Found";
+        error = err.message;
+    }
+ else if (err.code === "P2003") {
+        statusCode = 400;
+        message = "Foreign key constraint failed";
+        error = err.message;
+    }
+} else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+
+    statusCode = 400;
+    message = "Unknown Request Error";
+    error = err.message;
 }
 
 
