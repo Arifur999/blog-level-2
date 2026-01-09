@@ -61,6 +61,17 @@ if (err.code === "P2025") {
     statusCode = 500;
     message = "Internal Rust Panic Error";
     error = err.message;
+} else if (err instanceof Prisma.PrismaClientInitializationError) {
+
+if(err.errorCode==="P1000"){
+
+    statusCode = 500;
+    message = "Database connection error";
+    error = err.message;
+}
+
+
+   
 }
 
 
